@@ -2,41 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Bayou Hospitality Design System - New Orleans Inspired 
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base Colors */
+    --background: 250 250 250;
+    --foreground: 210 15% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* New Orleans Inspired Palette */
+    --bayou-deep-blue: 220 85% 15%;
+    --bayou-gold: 45 95% 55%;
+    --bayou-red: 355 85% 50%;
+    --bayou-cream: 45 40% 96%;
+    --bayou-charcoal: 210 15% 15%;
+    --bayou-pearl: 45 20% 88%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Primary Brand Colors */
+    --primary: 220 85% 15%;
+    --primary-foreground: 45 40% 96%;
+    --primary-hover: 220 85% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Secondary Colors */
+    --secondary: 45 95% 55%;
+    --secondary-foreground: 210 15% 15%;
+    --secondary-hover: 45 95% 65%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Accent Colors */
+    --accent: 355 85% 50%;
+    --accent-foreground: 45 40% 96%;
+    --accent-hover: 355 85% 60%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Neutral Palette */
+    --card: 45 40% 98%;
+    --card-foreground: 210 15% 15%;
+    --popover: 45 40% 98%;
+    --popover-foreground: 210 15% 15%;
+    --muted: 45 20% 94%;
+    --muted-foreground: 210 15% 45%;
+    --border: 45 20% 88%;
+    --input: 45 20% 94%;
+    --ring: 220 85% 15%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 40% 96%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Design Tokens */
+    --radius: 0.75rem;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--bayou-deep-blue)), hsl(var(--bayou-deep-blue) / 0.8));
+    --gradient-gold: linear-gradient(135deg, hsl(var(--bayou-gold)), hsl(var(--bayou-gold) / 0.8));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--bayou-cream)));
 
-    --radius: 0.5rem;
+    /* Shadows */
+    --shadow-elegant: 0 20px 25px -5px hsl(var(--bayou-deep-blue) / 0.1), 0 10px 10px -5px hsl(var(--bayou-deep-blue) / 0.04);
+    --shadow-gold: 0 10px 30px -10px hsl(var(--bayou-gold) / 0.3);
+    --shadow-card: 0 4px 6px -1px hsl(var(--bayou-charcoal) / 0.1), 0 2px 4px -1px hsl(var(--bayou-charcoal) / 0.06);
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,41 +83,40 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode optimized for New Orleans evening ambiance */
+    --background: 210 15% 8%;
+    --foreground: 45 40% 96%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 210 15% 12%;
+    --card-foreground: 45 40% 96%;
+    --popover: 210 15% 12%;
+    --popover-foreground: 45 40% 96%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --primary: 45 95% 55%;
+    --primary-foreground: 210 15% 15%;
+    --primary-hover: 45 95% 65%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 85% 25%;
+    --secondary-foreground: 45 40% 96%;
+    --secondary-hover: 220 85% 35%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --accent: 355 85% 60%;
+    --accent-foreground: 45 40% 96%;
+    --accent-hover: 355 85% 70%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 210 15% 18%;
+    --muted-foreground: 45 20% 70%;
+    --border: 210 15% 22%;
+    --input: 210 15% 18%;
+    --ring: 45 95% 55%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 45 40% 96%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Dark mode gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--background)), hsl(210 15% 15%));
+    --gradient-gold: linear-gradient(135deg, hsl(var(--bayou-gold)), hsl(var(--bayou-gold) / 0.6));
+    --shadow-elegant: 0 20px 25px -5px hsl(0 0% 0% / 0.4), 0 10px 10px -5px hsl(0 0% 0% / 0.2);
   }
 }
 
@@ -100,6 +126,83 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Typography & Layout Classes */
+@layer components {
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-custom {
+    @apply mx-auto max-w-7xl section-padding;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Hero Text Styles */
+  .hero-title {
+    @apply text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-balance;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .hero-subtitle {
+    @apply text-lg sm:text-xl lg:text-2xl text-balance opacity-90;
+  }
+
+  /* Custom Animations */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in-up-delay {
+    animation: fadeInUp 0.8s ease-out 0.3s forwards;
+    opacity: 0;
+  }
+
+  .animate-fade-in-up-delay-2 {
+    animation: fadeInUp 0.8s ease-out 0.6s forwards;
+    opacity: 0;
+  }
+
+  /* Video Background Overlay */
+  .video-overlay {
+    background: linear-gradient(135deg, 
+      hsl(var(--bayou-deep-blue) / 0.8) 0%, 
+      hsl(var(--bayou-deep-blue) / 0.6) 50%, 
+      hsl(var(--bayou-charcoal) / 0.8) 100%);
+  }
+
+  /* Card Hover Effects */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-elegant hover:-translate-y-2;
+  }
+
+  /* Button Variants */
+  .btn-hero {
+    @apply bg-gradient-to-r from-bayou-gold to-bayou-gold/80 text-bayou-charcoal px-8 py-4 rounded-xl font-semibold text-lg shadow-gold hover:shadow-xl hover:scale-105 transition-all duration-300;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent border-2 border-bayou-cream text-bayou-cream px-8 py-4 rounded-xl font-semibold text-lg hover:bg-bayou-cream hover:text-bayou-charcoal transition-all duration-300;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
