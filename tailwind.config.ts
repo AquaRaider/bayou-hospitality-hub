@@ -32,6 +32,9 @@ export default {
 				'bayou-cream': 'hsl(var(--bayou-cream))',
 				'bayou-charcoal': 'hsl(var(--bayou-charcoal))',
 				'bayou-pearl': 'hsl(var(--bayou-pearl))',
+				'bayou-green': 'hsl(var(--bayou-green))',
+				'bayou-dark-green': 'hsl(var(--bayou-dark-green))',
+				'bayou-light-blue': 'hsl(var(--bayou-light-blue))',
 				
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
@@ -67,8 +70,9 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-hero': 'var(--gradient-hero)',
-				'gradient-gold': 'var(--gradient-gold)',
+				'gradient-green': 'var(--gradient-green)',
 				'gradient-subtle': 'var(--gradient-subtle)',
+				'gradient-newsletter': 'var(--gradient-newsletter)',
 			},
 			boxShadow: {
 				'elegant': 'var(--shadow-elegant)',

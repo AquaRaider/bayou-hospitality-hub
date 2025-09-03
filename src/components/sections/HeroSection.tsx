@@ -1,16 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { ArrowDown } from "lucide-react";
 import heroImage from "@/assets/hero-food.jpg";
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
+      {/* Background Image with Parallax */}
       <div className="absolute inset-0 z-0">
         <img
           src={heroImage}
           alt="Delicious New Orleans cuisine showcasing our restaurant quality"
           className="w-full h-full object-cover"
+          style={{
+            transform: `translateY(${scrollY * 0.5}px)`,
+          }}
         />
         <div className="absolute inset-0 video-overlay" />
       </div>
@@ -20,7 +32,7 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto">
           <h1 className="hero-title text-white mb-6 animate-fade-in-up">
             Welcome to
-            <span className="text-bayou-gold block">Bayou Hospitality</span>
+            <span className="text-bayou-green block">Bayou Hospitality</span>
           </h1>
           
           <p className="hero-subtitle text-bayou-cream mb-8 animate-fade-in-up-delay">
@@ -40,7 +52,7 @@ const HeroSection = () => {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <a href="#about" className="text-bayou-cream hover:text-bayou-gold transition-colors">
+          <a href="#about" className="text-bayou-cream hover:text-bayou-green transition-colors">
             <ArrowDown size={32} />
           </a>
         </div>

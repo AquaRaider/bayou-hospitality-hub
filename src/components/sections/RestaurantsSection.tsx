@@ -27,7 +27,7 @@ const RestaurantsSection = () => {
   ];
 
   return (
-    <section id="restaurants" className="py-20 bg-background">
+    <section id="restaurants" className="py-20 bg-gradient-subtle">
       <div className="container-custom">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-6">
@@ -70,7 +70,7 @@ const RestaurantsSection = () => {
                   </div>
                 </div>
 
-                <Button className="w-full bg-primary hover:bg-primary-hover text-primary-foreground">
+                <Button className="w-full btn-hero">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Visit Website
                 </Button>

@@ -32,10 +32,10 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-20 bg-bayou-pearl">
+    <section id="contact" className="py-20 bg-white">
       <div className="container-custom">
         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-6">
+          <h2 className="text-4xl lg:text-5xl font-serif font-bold text-bayou-dark-green mb-6">
             Get in Touch
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -48,7 +48,7 @@ const ContactSection = () => {
           {/* Contact Form */}
           <Card className="shadow-card border-0">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-serif font-bold text-primary mb-6">
+              <h3 className="text-2xl font-serif font-bold text-bayou-dark-green mb-6">
                 Send us a Message
               </h3>
               
@@ -88,7 +88,7 @@ const ContactSection = () => {
                   />
                 </div>
                 
-                <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-primary-foreground">
+                <Button type="submit" className="w-full btn-hero">
                   Send Message
                 </Button>
               </form>
@@ -99,37 +99,37 @@ const ContactSection = () => {
           <div className="space-y-8">
             <Card className="shadow-card border-0">
               <CardContent className="p-8">
-                <h3 className="text-2xl font-serif font-bold text-primary mb-6">
+                <h3 className="text-2xl font-serif font-bold text-bayou-dark-green mb-6">
                   Contact Information
                 </h3>
                 
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-gold rounded-lg flex items-center justify-center">
-                      <Mail className="w-6 h-6 text-bayou-charcoal" />
+                    <div className="w-12 h-12 bg-bayou-light-blue rounded-lg flex items-center justify-center">
+                      <Mail className="w-6 h-6 text-bayou-dark-green" />
                     </div>
                     <div>
-                      <p className="font-semibold text-primary">Email</p>
+                      <p className="font-semibold text-bayou-dark-green">Email</p>
                       <p className="text-muted-foreground">info@bayouhospitality.com</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-gold rounded-lg flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-bayou-charcoal" />
+                    <div className="w-12 h-12 bg-bayou-light-blue rounded-lg flex items-center justify-center">
+                      <Phone className="w-6 h-6 text-bayou-dark-green" />
                     </div>
                     <div>
-                      <p className="font-semibold text-primary">Phone</p>
+                      <p className="font-semibold text-bayou-dark-green">Phone</p>
                       <p className="text-muted-foreground">(504) 555-BAYOU</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-gold rounded-lg flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-bayou-charcoal" />
+                    <div className="w-12 h-12 bg-bayou-light-blue rounded-lg flex items-center justify-center">
+                      <MapPin className="w-6 h-6 text-bayou-dark-green" />
                     </div>
                     <div>
-                      <p className="font-semibold text-primary">Location</p>
+                      <p className="font-semibold text-bayou-dark-green">Location</p>
                       <p className="text-muted-foreground">New Orleans, Louisiana</p>
                     </div>
                   </div>
@@ -139,17 +139,17 @@ const ContactSection = () => {
 
             <Card className="shadow-card border-0">
               <CardContent className="p-8">
-                <h3 className="text-2xl font-serif font-bold text-primary mb-6">
+                <h3 className="text-2xl font-serif font-bold text-bayou-dark-green mb-6">
                   Follow Us
                 </h3>
                 
                 <div className="flex space-x-4">
-                  <Button variant="outline" size="icon" className="border-bayou-gold text-bayou-gold hover:bg-bayou-gold hover:text-white">
-                    <Facebook className="w-5 h-5" />
-                  </Button>
-                  <Button variant="outline" size="icon" className="border-bayou-gold text-bayou-gold hover:bg-bayou-gold hover:text-white">
-                    <Instagram className="w-5 h-5" />
-                  </Button>
+                  <div className="w-12 h-12 bg-bayou-light-blue rounded-lg flex items-center justify-center cursor-pointer hover:bg-bayou-light-blue/80 transition-colors">
+                    <Facebook className="w-6 h-6 text-bayou-dark-green" />
+                  </div>
+                  <div className="w-12 h-12 bg-bayou-light-blue rounded-lg flex items-center justify-center cursor-pointer hover:bg-bayou-light-blue/80 transition-colors">
+                    <Instagram className="w-6 h-6 text-bayou-dark-green" />
+                  </div>
                 </div>
               </CardContent>
             </Card>

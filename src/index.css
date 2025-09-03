@@ -12,28 +12,33 @@ All colors MUST be HSL.
     --background: 250 250 250;
     --foreground: 210 15% 15%;
 
-    /* New Orleans Inspired Palette */
+    /* Updated Color Palette */
     --bayou-deep-blue: 220 85% 15%;
     --bayou-gold: 45 95% 55%;
     --bayou-red: 355 85% 50%;
     --bayou-cream: 45 40% 96%;
     --bayou-charcoal: 210 15% 15%;
     --bayou-pearl: 45 20% 88%;
+    
+    /* New Color Scheme */
+    --bayou-green: 94 19% 55%; /* #8ba38c */
+    --bayou-dark-green: 84 20% 31%; /* #4d5a3f */
+    --bayou-light-blue: 179 25% 58%; /* #7ba5a4 */
 
     /* Primary Brand Colors */
-    --primary: 220 85% 15%;
-    --primary-foreground: 45 40% 96%;
-    --primary-hover: 220 85% 25%;
+    --primary: 84 20% 31%; /* Dark Green */
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 84 20% 41%;
 
     /* Secondary Colors */
-    --secondary: 45 95% 55%;
-    --secondary-foreground: 210 15% 15%;
-    --secondary-hover: 45 95% 65%;
+    --secondary: 94 19% 55%; /* Green */
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 94 19% 65%;
 
     /* Accent Colors */
-    --accent: 355 85% 50%;
-    --accent-foreground: 45 40% 96%;
-    --accent-hover: 355 85% 60%;
+    --accent: 179 25% 58%; /* Light Blue */
+    --accent-foreground: 0 0% 100%;
+    --accent-hover: 179 25% 68%;
 
     /* Neutral Palette */
     --card: 45 40% 98%;
@@ -56,9 +61,10 @@ All colors MUST be HSL.
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(var(--bayou-deep-blue)), hsl(var(--bayou-deep-blue) / 0.8));
-    --gradient-gold: linear-gradient(135deg, hsl(var(--bayou-gold)), hsl(var(--bayou-gold) / 0.8));
-    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--bayou-cream)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--bayou-light-blue)), hsl(var(--bayou-green)));
+    --gradient-green: linear-gradient(135deg, hsl(var(--bayou-green)), hsl(var(--bayou-green) / 0.8));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(var(--bayou-light-blue) / 0.1));
+    --gradient-newsletter: linear-gradient(135deg, hsl(var(--bayou-light-blue)), hsl(var(--bayou-green)));
 
     /* Shadows */
     --shadow-elegant: 0 20px 25px -5px hsl(var(--bayou-deep-blue) / 0.1), 0 10px 10px -5px hsl(var(--bayou-deep-blue) / 0.04);
@@ -188,11 +194,15 @@ All colors MUST be HSL.
 
   /* Button Variants */
   .btn-hero {
-    @apply bg-gradient-to-r from-bayou-gold to-bayou-gold/80 text-bayou-charcoal px-8 py-4 rounded-xl font-semibold text-lg shadow-gold hover:shadow-xl hover:scale-105 transition-all duration-300;
+    @apply bg-gradient-to-r from-bayou-green to-bayou-green/80 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300;
   }
 
   .btn-secondary {
-    @apply bg-transparent border-2 border-bayou-cream text-bayou-cream px-8 py-4 rounded-xl font-semibold text-lg hover:bg-bayou-cream hover:text-bayou-charcoal transition-all duration-300;
+    @apply bg-transparent border-2 border-bayou-cream text-bayou-cream px-8 py-4 rounded-xl font-semibold text-lg hover:bg-bayou-cream hover:text-bayou-dark-green transition-all duration-300;
+  }
+  
+  .btn-newsletter {
+    @apply bg-gradient-to-r from-bayou-light-blue to-bayou-light-blue/80 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300;
   }
 }
 

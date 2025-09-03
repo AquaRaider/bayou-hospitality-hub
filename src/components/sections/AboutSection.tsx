@@ -43,8 +43,8 @@ const AboutSection = () => {
           {values.map((value, index) => (
             <Card key={index} className="text-center card-hover bg-card shadow-card border-0">
               <CardContent className="p-8">
-                <div className="w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mx-auto mb-6">
-                  <value.icon className="w-8 h-8 text-bayou-charcoal" />
+                <div className="w-16 h-16 bg-gradient-green rounded-full flex items-center justify-center mx-auto mb-6">
+                  <value.icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-primary mb-4">
                   {value.title}
