@@ -36,7 +36,7 @@ const ContactSection = () => {
       <div className="container-custom">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-serif font-bold text-bayou-dark-green mb-6">
-            Get in Touch
+            GET IN TOUCH
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Have questions about our restaurants, catering, or private events? 
@@ -49,7 +49,7 @@ const ContactSection = () => {
           <Card className="shadow-card border-0">
             <CardContent className="p-8">
               <h3 className="text-2xl font-serif font-bold text-bayou-dark-green mb-6">
-                Send us a Message
+                SEND US A MESSAGE
               </h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -100,7 +100,7 @@ const ContactSection = () => {
             <Card className="shadow-card border-0">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-serif font-bold text-bayou-dark-green mb-6">
-                  Contact Information
+                  CONTACT INFORMATION
                 </h3>
                 
                 <div className="space-y-6">
@@ -140,7 +140,7 @@ const ContactSection = () => {
             <Card className="shadow-card border-0">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-serif font-bold text-bayou-dark-green mb-6">
-                  Follow Us
+                  FOLLOW US
                 </h3>
                 
                 <div className="flex space-x-4">

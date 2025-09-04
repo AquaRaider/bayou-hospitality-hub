@@ -1,68 +1,68 @@
+// src/components/layout/Header.tsx
 import { useEffect, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 
-export default function Header() {
+type HeaderProps = {
+  /** Set true on pages without the Hero (e.g., Blog) */
+  disableHeroReactivity?: boolean;
+  /** Force colors regardless of hero position */
+  forceColors?: {
+    hospitality?: "lightBlue" | "white" | "darkGreen";
+    newsletter?: "darkGreen" | "white";
+  };
+  /** 'frosted' (main page) or 'solid' (blog) */
+  background?: "frosted" | "solid";
+};
+
+export default function Header({
+  disableHeroReactivity = false,
+  forceColors,
+  background = "frosted",
+}: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [hover, setHover] = useState(false);
   const [isInHero, setIsInHero] = useState(true);
 
+  // Mobile-only dropdown for nav
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const arrowTouchStart = useRef<number | null>(null);
+
   // ---------------------------
   // Tuning knobs
   // ---------------------------
-  const DOWN_EARLY_PX = 16;   // flip to Light Blue / Dark Green just before fully leaving Hero
-  const UP_EARLY_PX   = 120;  // flip back earlier when coming up toward Hero
-  const HOLD_UP_MS    = 10;   // delay before turning WHITE (on the way up)
+  const DOWN_EARLY_PX = 16;
+  const UP_EARLY_PX = 120;
+  const HOLD_UP_MS = 10;
 
-  // Per-text transition lengths
-  // HOSPITALITY (Light Blue <-> White)
-  const TRANSITION_TO_WHITE_MS_HOSP = 1200; // Light Blue -> White (returning to Hero)
-  const TRANSITION_TO_BLUE_MS_HOSP  = 1200; // White -> Light Blue (leaving Hero)
+  // HOSPITALITY
+  const TRANSITION_TO_WHITE_MS_HOSP = 1200;
+  const TRANSITION_TO_BLUE_MS_HOSP = 1200;
 
-  // NEWSLETTER (Dark Green <-> White)
-  const TRANSITION_TO_WHITE_MS_CTA = 1200; // Dark Green -> White (returning to Hero)
-  const TRANSITION_TO_DARK_MS_CTA  = 1600; // White -> Dark Green (leaving Hero)
+  // NEWSLETTER
+  const TRANSITION_TO_WHITE_MS_CTA = 1200;
+  const TRANSITION_TO_DARK_MS_CTA = 1600;
 
-  // ====== Width-matching calibration (HOSPITALITY to BAYOU) ======
-  const WIDTH_MATCH_TWEAK = 0.985; // 98.5% of BAYOU width; adjust if needed
-  const WIDTH_FUDGE_PX    = 0;     // subtract N px from BAYOU width before matching
+  // Width match
+  const WIDTH_MATCH_TWEAK = 0.985;
+  const WIDTH_FUDGE_PX = 0;
 
-  // Internal refs/state
+  // Refs/state
   const prevYRef = useRef(0);
   const heroBottomRef = useRef(0);
   const isInHeroRef = useRef(true);
   const holdUpTimer = useRef<number | null>(null);
 
-  // Active transition durations used by the spans
-  const [hospTransitionMs, setHospTransitionMs] = useState<number>(TRANSITION_TO_BLUE_MS_HOSP);
-  const [ctaTransitionMs,  setCtaTransitionMs]  = useState<number>(TRANSITION_TO_DARK_MS_CTA);
+  const [hospTransitionMs, setHospTransitionMs] = useState<number>(
+    TRANSITION_TO_BLUE_MS_HOSP
+  );
+  const [ctaTransitionMs, setCtaTransitionMs] = useState<number>(
+    TRANSITION_TO_DARK_MS_CTA
+  );
 
-  // Width-matching
   const bayouRef = useRef<HTMLSpanElement | null>(null);
-  const hospRef  = useRef<HTMLSpanElement | null>(null);
-  const roRef    = useRef<ResizeObserver | null>(null);
+  const hospRef = useRef<HTMLSpanElement | null>(null);
+  const roRef = useRef<ResizeObserver | null>(null);
   const [hospScale, setHospScale] = useState<number>(1);
-
-  const measureAndMatchWidths = () => {
-    const bay = bayouRef.current;
-    const hos = hospRef.current;
-    if (!bay || !hos) return;
-
-    // Temporarily remove transform to measure intrinsic width
-    const prevTransform = hos.style.transform;
-    hos.style.transform = "none";
-
-    const bayW  = bay.getBoundingClientRect().width;
-    const hospW = hos.getBoundingClientRect().width;
-
-    // Restore previous transform
-    hos.style.transform = prevTransform;
-
-    if (bayW > 0 && hospW > 0) {
-      const adjustedBayW = Math.max(0, bayW - WIDTH_FUDGE_PX);
-      const target = (adjustedBayW / hospW) * WIDTH_MATCH_TWEAK;
-      const clamped = Math.max(0.75, Math.min(target, 2.0));
-      setHospScale(clamped);
-    }
-  };
 
   const headerH = () =>
     (document.querySelector("header") as HTMLElement)?.offsetHeight || 0;
@@ -74,7 +74,26 @@ export default function Header() {
     heroBottomRef.current = top + h - headerH();
   };
 
-  // Cancel any pending "turn white" delay
+  // --- Width matching (shared helper) ---
+  const measureAndMatchWidths = () => {
+    const bay = bayouRef.current;
+    const hos = hospRef.current;
+    if (!bay || !hos) return;
+
+    const prevTransform = hos.style.transform;
+    hos.style.transform = "none";
+    const bayW = bay.getBoundingClientRect().width;
+    const hospW = hos.getBoundingClientRect().width;
+    hos.style.transform = prevTransform;
+
+    if (bayW > 0 && hospW > 0) {
+      const adjustedBayW = Math.max(0, bayW - WIDTH_FUDGE_PX);
+      const target = (adjustedBayW / hospW) * WIDTH_MATCH_TWEAK;
+      const clamped = Math.max(0.75, Math.min(target, 2.0));
+      setHospScale(clamped);
+    }
+  };
+
   const cancelWhiteFlip = () => {
     if (holdUpTimer.current) {
       window.clearTimeout(holdUpTimer.current);
@@ -82,14 +101,11 @@ export default function Header() {
     }
   };
 
-  // Schedule the delayed flip to WHITE (on the way up), using the correct durations
   const scheduleWhiteFlip = () => {
     cancelWhiteFlip();
     holdUpTimer.current = window.setTimeout(() => {
-      // 1) Set the durations for "to WHITE" on both elements
       setHospTransitionMs(TRANSITION_TO_WHITE_MS_HOSP);
       setCtaTransitionMs(TRANSITION_TO_WHITE_MS_CTA);
-      // 2) Flip color on next frame so the new durations are applied
       requestAnimationFrame(() => {
         isInHeroRef.current = true;
         setIsInHero(true);
@@ -98,12 +114,17 @@ export default function Header() {
     }, HOLD_UP_MS);
   };
 
+  // Hero reactivity (skip in static mode like Blog)
   useEffect(() => {
-    // Initial measurements
+    if (disableHeroReactivity) {
+      setIsInHero(false);
+      setScrolled(window.scrollY > 4);
+      return;
+    }
+
     computeHeroBottom();
     prevYRef.current = window.scrollY;
 
-    // Initial state
     const initialInHero = window.scrollY <= heroBottomRef.current;
     isInHeroRef.current = initialInHero;
     setIsInHero(initialInHero);
@@ -112,36 +133,25 @@ export default function Header() {
     const onScroll = () => {
       const y1 = window.scrollY;
       const down = y1 > prevYRef.current;
-
-      // Direction-adjusted boundary
       const boundary =
         heroBottomRef.current + (down ? -DOWN_EARLY_PX : UP_EARLY_PX);
-
       const inHeroNow = y1 <= boundary;
 
-      // Only act when the state would flip
       if (inHeroNow !== isInHeroRef.current) {
         if (inHeroNow) {
-          // Coming UP into Hero -> delay, then transition to WHITE on both
           scheduleWhiteFlip();
         } else {
-          // Leaving Hero -> immediately to colored state on both
           cancelWhiteFlip();
-          // 1) Set durations for "to colored"
-          setHospTransitionMs(TRANSITION_TO_BLUE_MS_HOSP); // to Light Blue
-          setCtaTransitionMs(TRANSITION_TO_DARK_MS_CTA);   // to Dark Green
-          // 2) Flip on next frame so new durations apply
+          setHospTransitionMs(TRANSITION_TO_BLUE_MS_HOSP);
+          setCtaTransitionMs(TRANSITION_TO_DARK_MS_CTA);
           requestAnimationFrame(() => {
             isInHeroRef.current = false;
             setIsInHero(false);
           });
         }
       }
-
-      // Header border/shadow state
       const s = y1 > 4;
       setScrolled((prev) => (prev !== s ? s : prev));
-
       prevYRef.current = y1;
     };
 
@@ -151,11 +161,9 @@ export default function Header() {
       onScroll();
     };
 
-    // Keep in sync with your snap event (arrow, etc.)
     const onHeroSnapFinished = (e: Event) => {
       const ev = e as CustomEvent<{ dir: "down" | "up" }>;
       if (ev.detail?.dir === "down") {
-        // Leaving Hero -> colored states now (with their own durations)
         cancelWhiteFlip();
         setHospTransitionMs(TRANSITION_TO_BLUE_MS_HOSP);
         setCtaTransitionMs(TRANSITION_TO_DARK_MS_CTA);
@@ -164,30 +172,9 @@ export default function Header() {
           setIsInHero(false);
         });
       } else if (ev.detail?.dir === "up") {
-        // Returning to Hero -> delay then WHITE (with their own durations)
         scheduleWhiteFlip();
       }
     };
-
-    // Run width match after fonts are ready (important for local fonts)
-    const afterFonts = () => {
-      measureAndMatchWidths();
-      // Observe changes to either span's size
-      if ("ResizeObserver" in window) {
-        roRef.current?.disconnect();
-        roRef.current = new ResizeObserver(() => measureAndMatchWidths());
-        if (bayouRef.current) roRef.current.observe(bayouRef.current);
-        if (hospRef.current) roRef.current.observe(hospRef.current);
-      }
-    };
-    // @ts-ignore - fonts is widely supported in modern browsers
-    if ((document as any).fonts?.ready) {
-      // @ts-ignore
-      (document as any).fonts.ready.then(afterFonts);
-    } else {
-      setTimeout(afterFonts, 0);
-      window.addEventListener("load", afterFonts, { once: true });
-    }
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
@@ -199,133 +186,253 @@ export default function Header() {
       window.removeEventListener("resize", onResize as any);
       window.removeEventListener("orientationchange", onResize as any);
       window.removeEventListener("heroSnapFinished", onHeroSnapFinished as any);
-      roRef.current?.disconnect();
       cancelWhiteFlip();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [disableHeroReactivity]);
+
+  // Width match (always on)
+  useEffect(() => {
+    const afterFonts = () => {
+      measureAndMatchWidths();
+      if ("ResizeObserver" in window) {
+        roRef.current?.disconnect();
+        roRef.current = new ResizeObserver(() => measureAndMatchWidths());
+        if (bayouRef.current) roRef.current.observe(bayouRef.current);
+        if (hospRef.current) roRef.current.observe(hospRef.current);
+      }
+    };
+    // @ts-ignore
+    if ((document as any).fonts?.ready) {
+      // @ts-ignore
+      (document as any).fonts.ready.then(afterFonts);
+    } else {
+      setTimeout(afterFonts, 0);
+      window.addEventListener("load", afterFonts, { once: true });
+    }
+    return () => roRef.current?.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Frosted CTA opacity levels
+  // BLOG mobile: nudge blog "Menu" button when header dropdown opens
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth >= 768) return; // mobile only
+    const btn = document.querySelector(
+      'button[aria-label="Open blog menu"]'
+    ) as HTMLElement | null;
+    if (btn) {
+      btn.style.transition = "transform 300ms ease";
+      btn.style.transform = mobileNavOpen ? "translateY(44px)" : "translateY(0)";
+    }
+  }, [mobileNavOpen]);
+
+  // CTA background (frosted)
   const baseAlpha = 0.45;
   const hoverAlpha = 0.65;
   const alpha = hover ? hoverAlpha : baseAlpha;
 
+  // Color selection (forced > reactive)
+  const hospForcedClass =
+    forceColors?.hospitality === "lightBlue"
+      ? "text-[#7ba5a4]"
+      : forceColors?.hospitality === "darkGreen"
+      ? "text-[#4d5a3f]"
+      : forceColors?.hospitality === "white"
+      ? "text-white"
+      : null;
+
+  const ctaForcedClass =
+    forceColors?.newsletter === "darkGreen"
+      ? "text-[#4d5a3f]"
+      : forceColors?.newsletter === "white"
+      ? "text-white"
+      : null;
+
+  const hospClass =
+    hospForcedClass ?? (isInHero ? "text-white" : "text-[#7ba5a4]");
+  const ctaTextClass =
+    ctaForcedClass ?? (isInHero ? "text-white" : "text-[#4d5a3f]");
+
+  const containerClasses = [
+    "fixed inset-x-0 top-0 z-50",
+    "h-[88px]",
+    "transition-[border-color,box-shadow,background-color] duration-300",
+    background === "frosted" ? "backdrop-blur-xl" : "bg-white",
+    background === "frosted"
+      ? scrolled
+        ? "border-b border-black/10 shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
+        : "border-b border-white/20 shadow-[0_2px_10px_rgba(0,0,0,0.06)]"
+      : "border-b border-black/10 shadow-[0_8px_20px_rgba(0,0,0,0.06)]",
+  ].join(" ");
+
+  // Mobile arrow: tap or swipe down to open
+  const onArrowTouchStart = (e: React.TouchEvent) => {
+    arrowTouchStart.current = e.touches[0].clientY;
+  };
+  const onArrowTouchMove = (e: React.TouchEvent) => {
+    const s = arrowTouchStart.current;
+    if (s == null) return;
+    const dy = e.touches[0].clientY - s;
+    if (dy > 18 && !mobileNavOpen) {
+      setMobileNavOpen(true);
+      arrowTouchStart.current = null;
+    }
+  };
+
   return (
-    <header
-      className={[
-        "fixed inset-x-0 top-0 z-50",
-        "h-[88px]",
-        "backdrop-blur-xl",
-        scrolled
-          ? "border-b border-black/10 shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
-          : "border-b border-white/20 shadow-[0_2px_10px_rgba(0,0,0,0.06)]",
-        "transition-[border-color,box-shadow] duration-300",
-      ].join(" ")}
-      style={{
-        backgroundColor: "transparent",
-        WebkitBackdropFilter: "blur(24px)",
-        backdropFilter: "blur(24px)",
-      }}
-    >
-      <div
-        className={[
-          "mx-auto flex h-full max-w-7xl items-center justify-between",
-          "px-3 sm:px-4", // a touch more left padding on mobile
-        ].join(" ")}
-        style={{ paddingLeft: "calc(env(safe-area-inset-left, 0px) + 0.75rem)" }}
+    <>
+      <header
+        className={containerClasses}
+        style={
+          background === "frosted"
+            ? {
+                backgroundColor: "transparent",
+                WebkitBackdropFilter: "blur(24px)",
+                backdropFilter: "blur(24px)",
+              }
+            : undefined
+        }
       >
-        {/* Brand (stacked + centered; nudged right on mobile) */}
-        <a
-          href="#home"
+        <div
           className={[
-            "flex flex-col items-center leading-tight transition-colors duration-300",
-            "ml-2 sm:ml-0", // nudge right on mobile only
-          ].join(" ")}
-          style={{ color: "var(--header-ink, #ffffff)" /* BAYOU color */ }}
-        >
-          {/* BAYOU with larger letter-spacing on mobile */}
-          <span
-            ref={bayouRef}
-            className="
-              font-serif
-              text-4xl sm:text-4xl md:text-5xl
-              tracking-[0.14em]   /* mobile: bigger spacing */
-              sm:tracking-[0.14em]/* small: slightly less */
-              md:tracking-normal  /* desktop: normal */
-            "
-          >
-            BAYOU
-          </span>
-
-          {/* HOSPITALITY auto-scales to (slightly under) BAYOU width on all breakpoints */}
-          <span
-            ref={hospRef}
-            className={[
-              "font-sans uppercase inline-block",
-              "relative -top-[2px]",
-              "text-[0.9rem] sm:text-[0.98rem]",
-              "tracking-[0.055em]",
-              "transition-colors ease-in-out will-change-transform",
-              isInHero ? "text-white" : "text-[#7ba5a4]" /* Light Blue */,
-            ].join(" ")}
-            style={{
-              transitionProperty: "color",
-              transitionDuration: `${hospTransitionMs}ms`,
-              transform: `translateZ(0) scaleX(${hospScale})`,
-              transformOrigin: "center",
-            }}
-          >
-            HOSPITALITY
-          </span>
-        </a>
-
-        {/* Nav */}
-        <nav className="hidden items-center gap-10 md:flex">
-          <HeaderLink href="#home">Home</HeaderLink>
-          <HeaderLink href="#about">About</HeaderLink>
-          <HeaderLink href="#restaurants">Restaurants</HeaderLink>
-          <HeaderLink href="#contact">Contact</HeaderLink>
-        </nav>
-
-        {/* CTA — compact on mobile, larger on md+ */}
-        <a
-          href="#newsletter"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          className={[
-            "rounded-xl",
-            // mobile sizing
-            "px-3 py-1.5 text-sm",
-            // scale up on md+
-            "md:px-5 md:py-2.5 md:text-lg",
-            // frosted look
-            "backdrop-blur-md bg-clip-padding",
-            "border border-white/30 hover:border-white/40",
-            "shadow-sm transition-transform duration-200 hover:scale-105",
-            "focus:outline-none focus:ring-2 focus:ring-white/40",
+            "mx-auto flex h-full max-w-7xl items-center justify-between",
+            "px-3 sm:px-4",
           ].join(" ")}
           style={{
-            // frosted glass background (Green => #8ba38c)
-            backgroundColor: `rgba(var(--cta-bg-rgb, 139, 163, 140), ${alpha})`,
+            paddingLeft: "calc(env(safe-area-inset-left, 0px) + 0.75rem)",
           }}
         >
-          {/* Put the text color control on a child <span> so the anchor's transform still animates */}
-          <span
+          {/* Brand */}
+          <a
+            href="/#home"
             className={[
-              "font-serif transition-colors ease-in-out",
-              "text-sm md:text-lg",
-              isInHero ? "text-white" : "text-[#4d5a3f]" /* Dark Green */,
+              "flex flex-col items-center leading-tight transition-colors duration-300",
+              "ml-2 sm:ml-0",
+            ].join(" ")}
+            style={{ color: "var(--header-ink, #ffffff)" }}
+          >
+            <span
+              ref={bayouRef}
+              className="font-serif text-4xl sm:text-4xl md:text-5xl"
+            >
+              BAYOU
+            </span>
+
+            <span
+              ref={hospRef}
+              className={[
+                "font-sans uppercase inline-block",
+                "relative -top-[2px]",
+                "text-[0.9rem] sm:text-[0.98rem]",
+                "tracking-[0.055em]",
+                "transition-colors ease-in-out will-change-transform",
+                hospClass,
+              ].join(" ")}
+              style={{
+                transitionProperty: "color",
+                transitionDuration: `${hospTransitionMs}ms`,
+                transform: `translateZ(0) scaleX(${hospScale})`,
+                transformOrigin: "center",
+              }}
+            >
+              HOSPITALITY
+            </span>
+          </a>
+
+          {/* Center arrow – mobile only */}
+          <button
+            type="button"
+            className={[
+              "md:hidden absolute left-1/2 -translate-x-1/2",
+              "top-[44px] -translate-y-1/2",
+              "rounded-full p-1 transition",
+              mobileNavOpen ? "opacity-80 rotate-180" : "opacity-90 rotate-0",
+            ].join(" ")}
+            aria-label="Toggle navigation"
+            onClick={() => setMobileNavOpen((v) => !v)}
+            onTouchStart={onArrowTouchStart}
+            onTouchMove={onArrowTouchMove}
+          >
+            <ChevronDown
+              size={22}
+              className={background === "solid" ? "text-[#4d5a3f]" : "text-white"}
+            />
+          </button>
+
+          {/* Nav (desktop) */}
+          <nav className="hidden items-center gap-10 md:flex">
+            <HeaderLink href="/#home">Home</HeaderLink>
+            <HeaderLink href="/#about">About</HeaderLink>
+            <HeaderLink href="/#restaurants">Restaurants</HeaderLink>
+            <HeaderLink href="/blog">Blog</HeaderLink>
+            <HeaderLink href="/#contact">Contact</HeaderLink>
+          </nav>
+
+          {/* CTA */}
+          <a
+            href="/#newsletter"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            className={[
+              "rounded-xl",
+              "px-3 py-1.5 text-sm",
+              "md:px-5 md:py-2.5 md:text-lg",
+              "backdrop-blur-md bg-clip-padding",
+              "border border-white/30 hover:border-white/40",
+              "shadow-sm transition-transform duration-200 hover:scale-105",
+              "focus:outline-none focus:ring-2 focus:ring-white/40",
             ].join(" ")}
             style={{
-              transitionProperty: "color",
-              transitionDuration: `${ctaTransitionMs}ms`,
+              backgroundColor: `rgba(var(--cta-bg-rgb, 139, 163, 140), ${alpha})`,
             }}
           >
-            NEWSLETTER
-          </span>
-        </a>
+            <span
+              className={["font-serif transition-colors ease-in-out", "text-sm md:text-lg", ctaTextClass].join(
+                " "
+              )}
+              style={{
+                transitionProperty: "color",
+                transitionDuration: `${ctaTransitionMs}ms`,
+              }}
+            >
+              NEWSLETTER
+            </span>
+          </a>
+        </div>
+      </header>
+
+      {/* Mobile dropdown panel (reveals below header). Desktop unaffected. */}
+      <div
+        className={[
+          "md:hidden fixed inset-x-0 z-40",
+          "transition-all duration-300",
+          mobileNavOpen
+            ? "pointer-events-auto opacity-100 translate-y-0"
+            : "pointer-events-none opacity-0 -translate-y-2",
+        ].join(" ")}
+        style={{
+          top: 88, // header height
+        }}
+      >
+        <div
+          className={[
+            "mx-auto max-w-7xl px-4",
+            background === "solid" ? "bg-white" : "backdrop-blur-xl bg-white/5",
+            "border-b border-black/10 shadow-sm",
+          ].join(" ")}
+        >
+          <nav className="flex items-center justify-between py-3">
+            {/* NOTE: Use absolute URLs so links work even from the Blog page */}
+            <a href="/#home" className="font-sans text-[15px] hover:underline underline-offset-8 decoration-2 text-[#4d5a3f]">Home</a>
+            <a href="/#about" className="font-sans text-[15px] hover:underline underline-offset-8 decoration-2 text-[#4d5a3f]">About</a>
+            <a href="/#restaurants" className="font-sans text-[15px] hover:underline underline-offset-8 decoration-2 text-[#4d5a3f]">Restaurants</a>
+            <a href="/blog" className="font-sans text-[15px] hover:underline underline-offset-8 decoration-2 text-[#4d5a3f]">Blog</a>
+            <a href="/#contact" className="font-sans text-[15px] hover:underline underline-offset-8 decoration-2 text-[#4d5a3f]">Contact</a>
+          </nav>
+        </div>
       </div>
-    </header>
+    </>
   );
 }
 
