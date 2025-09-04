@@ -6,6 +6,23 @@
 All colors MUST be HSL.
 */
 
+/* ===========================
+   Custom Local Fonts
+   =========================== */
+@font-face {
+  font-family: "BodoniXT";
+  src: url("/fonts/BodoniXT.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Questrial";
+  src: url("/fonts/Questrial.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     /* Base Colors */
@@ -72,19 +89,12 @@ All colors MUST be HSL.
     --shadow-card: 0 4px 6px -1px hsl(var(--bayou-charcoal) / 0.1), 0 2px 4px -1px hsl(var(--bayou-charcoal) / 0.06);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -132,11 +142,15 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased font-sans;
   }
 
   html {
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
   }
 }
 
@@ -156,12 +170,11 @@ All colors MUST be HSL.
 
   /* Hero Text Styles */
   .hero-title {
-    @apply text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-balance;
-    font-family: 'Playfair Display', serif;
+    @apply font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-balance;
   }
 
   .hero-subtitle {
-    @apply text-lg sm:text-xl lg:text-2xl text-balance opacity-90;
+    @apply font-sans text-lg sm:text-xl lg:text-2xl text-balance opacity-90;
   }
 
   /* Custom Animations */

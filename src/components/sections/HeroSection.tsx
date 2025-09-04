@@ -151,11 +151,22 @@ const finish = () => {
             style={{ filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.55))" }}
             loading="eager" decoding="async" />
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl will-change-transform"
-          style={{ transform: `translateY(${titleY}px)`, transition: "transform 100ms linear",
-                   textShadow: "0 3px 14px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.65)" }}>
-          Welcome to Bayou Hospitality
-        </h1>
+        <h1
+  data-lov-id="src/components/sections/HeroSection.tsx:154:8"
+  data-lov-name="h1"
+  data-component-path="src/components/sections/HeroSection.tsx"
+  data-component-line="154"
+  data-component-file="HeroSection.tsx"
+  data-component-name="h1"
+  data-component-content='%7B%22text%22%3A%22Welcome%20to%20Bayou%20Hospitality%22%2C%22className%22%3A%22text-3xl%20font-semibold%20tracking-tight%20text-white%20sm%3Atext-4xl%20md%3Atext-5xl%20lg%3Atext-6xl%20will-change-transform%22%7D'
+  className="font-serif text-3xl tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl will-change-transform drop-shadow-lg"
+  style={{
+    transform: "translateY(18px)",
+    transition: "transform 100ms linear",
+  }}
+>
+  WELCOME TO BAYOU HOSPITALITY
+</h1>
       </div>
       <div className="pointer-events-auto absolute bottom-8 left-1/2 z-10 -translate-x-1/2 transition-opacity duration-150"
         style={{ opacity: Math.max(0, arrowOpacity) }}>
