@@ -1,147 +1,148 @@
 // src/components/sections/RestaurantsSection.tsx
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
-import { ExternalLink, MapPin } from "lucide-react";
+import { ExternalLink, MapPin, ChevronDown } from "lucide-react";
 import voodooChickenImage from "@/assets/voodoo-chicken.jpg";
 import blueBayouImage from "@/assets/blue-bayou.jpg";
-
-type LocationEntry = { label?: string; address: string };
 
 type Restaurant = {
   name: string;
   image: string;
   description: string;
+  locationSummary: string;
   website: string;
-  locations: LocationEntry[];
+  locations: string[];
 };
 
-const RestaurantsSection = () => {
-  const restaurants: Restaurant[] = [
-    {
-      name: "Voodoo Chicken",
-      image: voodooChickenImage,
-      description:
-        "Experience bold, authentic New Orleans flavors with our signature fried chicken, crafted with secret spices and served with Southern hospitality.",
-      website: "https://voodoochickenanddaiquirisnola.com/",
-      locations: [
-        { label: "Canal St (629)", address: "629 Canal St, New Orleans, LA 70130" },
-        { label: "Canal St (838)", address: "838 Canal St, New Orleans, LA 70112" },
-        { label: "St Louis St", address: "730 St Louis St, New Orleans, LA 70130" },
-        { label: "Bourbon St (Suites C & D)", address: "227 Bourbon St Suite C & D, New Orleans, LA 70130" },
-      ],
-    },
-    {
-      name: "Blue Bayou Oyster Bar & Grill",
-      image: blueBayouImage,
-      description:
-        "Fresh Gulf oysters and elevated Louisiana cuisine in an elegant setting. Perfect for special occasions and unforgettable dining experiences.",
-      website: "https://bluebayourestaurantnola.com/",
-      locations: [
-        { label: "Canal St (717)", address: "717 Canal St, New Orleans, LA 70130" },
-      ],
-    },
-  ];
+const restaurants: Restaurant[] = [
+  {
+    name: "Voodoo Chicken",
+    image: voodooChickenImage,
+    description:
+      "Experience bold, authentic New Orleans flavors with our signature fried chicken, crafted with secret spices and served with Southern hospitality.",
+    locationSummary: "French Quarter, New Orleans",
+    website: "https://voodoochickenanddaiquirisnola.com/",
+    locations: [
+      "629 Canal St, New Orleans, LA 70130",
+      "838 Canal St, New Orleans, LA 70112",
+      "730 St Louis St, New Orleans, LA 70130",
+      "227 Bourbon St Suite C & D, New Orleans, LA 70130",
+    ],
+  },
+  {
+    name: "Blue Bayou Oyster Bar & Grill",
+    image: blueBayouImage,
+    description:
+      "Fresh Gulf oysters and elevated Louisiana cuisine in an elegant setting. Perfect for special occasions and unforgettable dining experiences.",
+    locationSummary: "Warehouse District, New Orleans",
+    website: "https://bluebayourestaurantnola.com/",
+    locations: ["717 Canal St, New Orleans, LA 70130"],
+  },
+];
 
+export default function RestaurantsSection() {
   return (
     <section id="restaurants" className="py-20 bg-gradient-subtle">
       <div className="container-custom">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-6">
-            OUR RESTAURANTS
+        <div className="mb-16 text-center">
+          <h2 className="mb-6 font-serif text-4xl font-bold text-[#4d5a3f] lg:text-5xl">
+            Our Restaurants
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Two distinct dining experiences, both rooted in New Orleans tradition
             and committed to exceptional quality.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {restaurants.map((restaurant, index) => (
+        <div className="grid gap-12 lg:grid-cols-2">
+          {restaurants.map((r) => (
             <Card
-              key={index}
-              className="overflow-hidden card-hover bg-card shadow-elegant border-0"
+              key={r.name}
+              className="card-hover overflow-hidden border-0 bg-card shadow-elegant"
             >
               <div className="aspect-[4/3] overflow-hidden">
                 <img
-                  src={restaurant.image}
-                  alt={`${restaurant.name} restaurant interior and dining experience`}
-                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  src={r.image}
+                  alt={`${r.name} restaurant interior and dining experience`}
+                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
                 />
               </div>
 
               <CardContent className="p-8">
-                {/* Headings now Dark Green */}
-                <h3 className="text-2xl font-serif font-bold text-bayou-dark-green mb-4">
-                  {restaurant.name}
+                {/* Name — Dark Green */}
+                <h3 className="mb-4 font-serif text-2xl font-bold text-[#4d5a3f]">
+                  {r.name}
                 </h3>
 
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {restaurant.description}
+                <p className="mb-6 leading-relaxed text-muted-foreground">
+                  {r.description}
                 </p>
 
-                {/* Uniform location dropdown; trigger text is Green */}
-                <div className="mb-6">
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="locations">
-                      <AccordionTrigger className="text-sm text-bayou-green hover:underline">
-                        {restaurant.locations.length > 1
-                          ? `View all locations (${restaurant.locations.length})`
-                          : "View location"}
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ul className="space-y-3">
-                          {restaurant.locations.map((loc, i) => (
-                            <li
-                              key={i}
-                              className="flex items-start justify-between gap-3 rounded-lg border border-border bg-background/50 p-3"
-                            >
-                              <div className="flex items-start gap-2">
-                                <MapPin className="w-4 h-4 mt-0.5 text-primary" />
-                                <div className="text-sm text-muted-foreground">
-                                  <div className="font-medium text-foreground">
-                                    {loc.label ?? `Location ${i + 1}`}
-                                  </div>
-                                  <div>{loc.address}</div>
-                                </div>
-                              </div>
-
-                              <a
-                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                                  loc.address
-                                )}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm font-medium inline-flex items-center gap-1 hover:underline"
-                                style={{ color: "hsl(var(--accent))" }}
-                              >
-                                <ExternalLink className="w-4 h-4" />
-                                Directions
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                {/* Location summary */}
+                <div className="mb-6 text-sm text-muted-foreground">
+                  <div className="flex items-center">
+                    <MapPin className="mr-3 h-4 w-4 text-[#8ba38c]" />
+                    {r.locationSummary}
+                  </div>
                 </div>
 
-                {/* Website button opens in new tab */}
-                <Button asChild className="w-full btn-hero">
-                  <a
-                    href={restaurant.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {/* View all locations (explicit brand colors; bullet “bubbles” fixed for mobile) */}
+                <details className="group">
+                  <summary
+                    className="flex cursor-pointer select-none items-center gap-2 text-sm font-medium text-[#8ba38c] outline-none transition-colors hover:text-[#4d5a3f]"
+                    style={{ WebkitTextFillColor: "#8ba38c" }}
                   >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Visit Website
+                    <ChevronDown
+                      className="h-4 w-4 transition-transform duration-200 group-open:rotate-180"
+                      aria-hidden="true"
+                    />
+                    View all locations
+                  </summary>
+
+                  <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {r.locations.map((addr) => {
+                      const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        addr
+                      )}`;
+                      return (
+                        <li key={addr}>
+                          <a
+                            href={mapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={[
+                              // bubble container
+                              "location-chip block rounded-lg border px-3 py-2 text-sm no-underline shadow-sm transition",
+                              // colors: FORCE white bg + Dark Green text on all devices
+                              "border-[#4d5a3f]/30 bg-white text-[#4d5a3f]",
+                              // hover/focus
+                              "hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#8ba38c]/40",
+                            ].join(" ")}
+                            // iOS Safari sometimes paints a UA color; this kills it
+                            style={{ WebkitTextFillColor: "#4d5a3f" }}
+                          >
+                            <span className="flex items-start gap-2">
+                              <MapPin className="mt-[2px] h-4 w-4 shrink-0 text-[#8ba38c]" />
+                              <span className="leading-snug">
+                                {addr}
+                              </span>
+                            </span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </details>
+
+                {/* Website button */}
+                <div className="mt-6">
+                  <a href={r.website} target="_blank" rel="noopener noreferrer">
+                    <Button className="btn-hero w-full">
+                      <ExternalLink className="mr-2 h-4 w-4" />
+                      Visit Website
+                    </Button>
                   </a>
-                </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -149,6 +150,4 @@ const RestaurantsSection = () => {
       </div>
     </section>
   );
-};
-
-export default RestaurantsSection;
+}

@@ -260,3 +260,115 @@ main, .app, .layout, .page {
 .hero-white-fade{
   background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #ffffff 70%);
 }
+/* =========================================
+   MOBILE QUIRKS FIXES (place at end of file)
+   ========================================= */
+
+/* 1) Kill Chrome/Safari mobile autofill yellow on inputs */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  /* Repaint background to match your design */
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important; /* or hsl(var(--card)) if you prefer */
+  box-shadow:        0 0 0px 1000px #ffffff inset !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
+  caret-color: hsl(var(--foreground));
+  transition: background-color 9999s ease-out 0s; /* keeps UA from re-flashing yellow */
+}
+
+/* 2) Neutralize iOS/Android “smart link” styling on detected addresses/phones/emails */
+a[x-apple-data-detectors],
+span[x-apple-data-detectors] {
+  color: inherit !important;
+  text-decoration: none !important;
+  background-color: transparent !important;
+}
+
+/* Optional: keep tel/mail/geo links inheriting your text color */
+a[href^="tel:"],
+a[href^="mailto:"],
+a[href^="geo:"],
+a[href^="maps:"],
+.autolink {
+  color: inherit;
+  text-decoration-color: currentColor;
+}
+
+/* Softer tap highlight (Android/Chrome) instead of yellow-ish flash */
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.08);
+}
+/* =========================================================
+   MOBILE-ONLY FIXES: autofill yellow + smart link coloring
+   (place at END of index.css)
+   ========================================================= */
+@media (hover: none) and (pointer: coarse) {
+  /* 1) Kill Chrome/Safari autofill yellow on inputs & textareas */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  textarea:-webkit-autofill:active,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus,
+  select:-webkit-autofill:active {
+    /* Paint the field background yourself */
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important; /* or hsl(var(--card)) if your inputs sit on cards */
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    caret-color: hsl(var(--foreground)) !important;
+    transition: background-color 9999s ease-out 0s !important; /* prevents UA flashing the yellow again */
+    background-clip: padding-box !important;
+  }
+
+  /* Optional: when focused, also add your brand ring inside */
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill:focus {
+    -webkit-box-shadow:
+      0 0 0 1000px #ffffff inset,
+      0 0 0 2px #8ba38c inset !important;  /* Green ring (#8ba38c) */
+    box-shadow:
+      0 0 0 1000px #ffffff inset,
+      0 0 0 2px #8ba38c inset !important;
+  }
+
+  /* 2) Neutralize iOS/Android "smart link" (addresses/phones/emails) coloring */
+  a[x-apple-data-detectors],
+  span[x-apple-data-detectors],
+  /* common tel/mail/geo maps links */
+  a[href^="tel:"],
+  a[href^="mailto:"],
+  a[href^="geo:"],
+  a[href^="maps:"],
+  /* force restaurant section links to inherit your color */
+  #restaurants a {
+    color: inherit !important;
+    -webkit-text-fill-color: inherit !important;
+    text-decoration: none; /* keep it clean like your design */
+    background-color: transparent !important;
+  }
+
+  /* If you want restaurant location lines to always be Dark Green */
+  #restaurants,
+  #restaurants * {
+    color: #4d5a3f !important;        /* Dark Green */
+    -webkit-text-fill-color: #4d5a3f !important;
+  }
+
+  /* Contact form inputs: ensure white background on mobile */
+  #contact input,
+  #contact textarea,
+  form input,
+  form textarea {
+    background-color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
+  }
+}
+
+/* Slightly dim Android tap highlight (prevents yellow-ish flash) */
+* { -webkit-tap-highlight-color: rgba(0,0,0,0.08); }
