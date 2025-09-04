@@ -1,87 +1,92 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const [hover, setHover] = useState(false);
 
-  const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Restaurants", href: "#restaurants" },
-    { name: "Contact", href: "#contact" },
-  ];
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Alpha levels for CTA background
+  const baseAlpha = 0.70;
+  const hoverAlpha = 0.90;
+  const alpha = hover ? hoverAlpha : baseAlpha;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
-      <nav className="container-custom py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">B</span>
-            </div>
-            <div>
-              <div className="font-serif font-bold text-xl text-bayou-dark-green">
-                Bayou Hospitality
-              </div>
-              <div className="text-xs text-bayou-dark-green/70 -mt-1">
-                New Orleans Dining
-              </div>
-            </div>
-          </div>
+    <header
+      className={[
+        "fixed inset-x-0 top-0 z-50 h-[72px]",
+        "backdrop-blur-xl",
+        scrolled
+          ? "border-b border-black/10 shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
+          : "border-b border-white/20 shadow-[0_2px_10px_rgba(0,0,0,0.06)]",
+        "transition-[border-color,box-shadow] duration-300",
+      ].join(" ")}
+      style={{
+        backgroundColor: "transparent",
+        WebkitBackdropFilter: "blur(24px)",
+        backdropFilter: "blur(24px)",
+      }}
+    >
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4">
+        {/* Brand */}
+        <a
+          href="#home"
+          className="text-lg font-semibold tracking-wide transition-colors duration-300"
+          style={{ color: "var(--header-ink, #ffffff)" }}
+        >
+          Bayou Hospitality
+        </a>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-bayou-dark-green hover:text-bayou-green transition-colors duration-300 font-medium"
-              >
-                {item.name}
-              </a>
-            ))}
-            <Button className="btn-hero">
-              Newsletter
-            </Button>
-          </div>
+        {/* Nav */}
+        <nav className="hidden gap-8 md:flex">
+          <HeaderLink href="#home">Home</HeaderLink>
+          <HeaderLink href="#about">About</HeaderLink>
+          <HeaderLink href="#restaurants">Restaurants</HeaderLink>
+          <HeaderLink href="#contact">Contact</HeaderLink>
+        </nav>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X /> : <Menu />}
-          </Button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-border pt-4">
-            <div className="flex flex-col space-y-4">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-bayou-dark-green hover:text-bayou-green transition-colors duration-300 font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </a>
-              ))}
-              <Button className="btn-hero w-fit">
-                Newsletter
-              </Button>
-            </div>
-          </div>
-        )}
-      </nav>
+        {/* CTA — fades Green→Dark Green based on --cta-bg-rgb; more opaque on hover */}
+        <a
+          href="#newsletter"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          className={[
+            "rounded-xl px-4 py-2 text-sm font-semibold",
+            "text-white",
+            "border border-white/20 hover:border-white/30",
+            "shadow-sm transition-all duration-200 hover:scale-105",
+            "focus:outline-none focus:ring-2 focus:ring-white/40",
+          ].join(" ")}
+          style={{
+            backgroundColor: `rgba(var(--cta-bg-rgb, 139, 163, 140), ${alpha})`,
+          }}
+        >
+          Newsletter
+        </a>
+      </div>
     </header>
   );
-};
+}
 
-export default Header;
+function HeaderLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      className="text-sm font-medium transition-colors duration-300 hover:opacity-85"
+      style={{ color: "var(--header-ink, #ffffff)" }}
+    >
+      {children}
+    </a>
+  );
+}

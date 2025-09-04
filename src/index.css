@@ -204,6 +204,14 @@ All colors MUST be HSL.
   .btn-newsletter {
     @apply bg-gradient-to-r from-bayou-light-blue to-bayou-light-blue/80 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300;
   }
+
+  /* Utility: pure white fade reveal (never tints) */
+  .hero-white-fade {
+    background: #ffffff;
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.9) 75%, rgba(0,0,0,1) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0.9) 75%, rgba(0,0,0,1) 100%);
+    mix-blend-mode: normal;
+  }
 }
 
 @keyframes fadeInUp {
@@ -215,4 +223,27 @@ All colors MUST be HSL.
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* -------------------------------------------
+   HARD RESET: ensure page background is pure white
+   and remove any legacy overlays/gradients.
+-------------------------------------------- */
+html, body, #root {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  mix-blend-mode: normal !important;
+}
+body::before, body::after,
+#root::before, #root::after {
+  content: none !important;
+  background: none !important;
+}
+/* If your app has a top-level wrapper, keep it white too */
+main, .app, .layout, .page {
+  background: #ffffff !important;
+}
+/* makes the bottom fade pure white, no tint */
+.hero-white-fade{
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #ffffff 70%);
 }

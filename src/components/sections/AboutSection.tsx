@@ -1,64 +1,192 @@
-import { Card, CardContent } from "@/components/ui/card";
+// src/components/sections/AboutSection.tsx
+import { useEffect, useRef, useState } from "react";
+import voodooImg from "@/assets/voodoo-chicken.jpg";
+import bluebayouImg from "@/assets/blue-bayou.jpg";
 import { Heart, Users, Award } from "lucide-react";
 
-const AboutSection = () => {
-  const values = [
-    {
-      icon: Heart,
-      title: "Passion for Flavor",
-      description: "Every dish is crafted with love and authentic New Orleans traditions."
-    },
-    {
-      icon: Users,
-      title: "Community Focus",
-      description: "We bring people together through exceptional dining experiences."
-    },
-    {
-      icon: Award,
-      title: "Quality Excellence",
-      description: "Our commitment to quality ingredients and preparation is unwavering."
+const PILLARS = [
+  { icon: Heart, title: "Crafted with Heart", text: "Menus shaped by New Orleans’ traditions, executed with modern technique." },
+  { icon: Users, title: "Guests First", text: "We create warm, memorable moments for every guest." },
+  { icon: Award, title: "Relentless Quality", text: "Sourcing, prep, and service you can taste every time." },
+];
+
+const EARLY = 120; // px before About top to trigger the down animation
+
+export default function AboutSection() {
+  const ref = useRef<HTMLElement | null>(null);
+  const prevY = useRef(0);
+  const [shown, setShown] = useState(false);
+  const [animate, setAnimate] = useState(false);
+
+  const headerH = () =>
+    (document.querySelector("header") as HTMLElement)?.offsetHeight || 0;
+
+  const aboutTop = () => {
+    const el = ref.current;
+    return Math.max(0, (el?.offsetTop ?? 0) - headerH());
+  };
+
+  const heroBottom = () => {
+    const hero = document.getElementById("home");
+    const top = hero?.offsetTop ?? 0;
+    const h = hero?.offsetHeight || window.innerHeight;
+    return top + h - headerH();
+  };
+
+  const inHero = (y: number) => y <= heroBottom();
+
+  useEffect(() => {
+    prevY.current = window.scrollY;
+
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    if (reduce) { setShown(true); setAnimate(false); }
+
+    // If loading at/under About, show it (no auto-animate on load)
+    if (!reduce && window.scrollY >= aboutTop() - EARLY) {
+      setShown(true);
+      setAnimate(false);
     }
-  ];
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y0 = prevY.current;
+        const y1 = window.scrollY;
+        const down = y1 > y0;
+        const aTop = aboutTop();
+
+        // Entering from Hero -> About (down): animate (early)
+        if (down && y0 < aTop - EARLY && y1 >= aTop - EARLY) {
+          setShown(true);
+          setAnimate(true);
+        }
+
+        // Entering from below -> About (up): visible, no animation
+        if (!down && y0 > aTop && y1 <= aTop) {
+          setShown(true);
+          setAnimate(false);
+        }
+
+        // IMPORTANT: do NOT hide here on scroll-up.
+        // We will only hide when Hero announces its snap finished.
+
+        prevY.current = y1;
+        ticking = false;
+      });
+    };
+
+    // Listen for the Hero's snap-finished event to allow hiding
+    const onHeroSnapFinished = (e: Event) => {
+      const ev = e as CustomEvent<{ dir: "down" | "up" }>;
+      // Only hide after an upward snap AND we're truly back inside the Hero region
+      if (ev.detail?.dir === "up" && inHero(window.scrollY)) {
+        setShown(false);
+        setAnimate(false);
+      }
+      // If coming down, ensure About is shown (animation is already handled on scroll)
+      if (ev.detail?.dir === "down") {
+        setShown(true);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll as any, { passive: true });
+    window.addEventListener("heroSnapFinished", onHeroSnapFinished as any);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll as any);
+      window.removeEventListener("heroSnapFinished", onHeroSnapFinished as any);
+    };
+  }, []);
+
+  const base = "transition-all will-change-[opacity,transform]";
+  const dur = animate ? "duration-700" : "duration-0";
+  const vis = shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6";
 
   return (
-    <section id="about" className="py-20 bg-gradient-subtle">
-      <div className="container-custom">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-serif font-bold text-primary mb-6">
-            Our Story
+    <section ref={ref} id="about" className="relative bg-white py-24 md:py-32">
+      <div className="container mx-auto px-4">
+        <div className={["mx-auto max-w-4xl text-center", base, dur, vis].join(" ")}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#4d5a3f]">
+            About Bayou Hospitality
           </h2>
-          <div className="max-w-3xl mx-auto">
-            <p className="text-lg text-muted-foreground mb-6">
-              Bayou Hospitality was born from a deep love for New Orleans' rich culinary heritage 
-              and a passion for bringing people together through exceptional food and warm hospitality.
+          <div className="mx-auto mt-6 max-w-2xl space-y-3">
+            <p className="text-lg leading-relaxed text-[#111827]">
+              We’re a New Orleans hospitality group dedicated to warm service,
+              vibrant flavors, and unforgettable dining—rooted in the spirit of the city.
             </p>
-            <p className="text-lg text-muted-foreground">
-              Our restaurants each tell a unique story while sharing our commitment to authentic flavors, 
-              quality ingredients, and the vibrant spirit that makes New Orleans dining unforgettable.
+            <p className="text-lg leading-relaxed text-[#111827]">
+              Our family includes <span className="font-semibold text-[#4d5a3f]">Voodoo Chicken</span> and{" "}
+              <span className="font-semibold text-[#4d5a3f]">Blue Bayou Oyster Bar & Grill</span>.
             </p>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {values.map((value, index) => (
-            <Card key={index} className="text-center card-hover bg-card shadow-card border-0">
-              <CardContent className="p-8">
-                <div className="w-16 h-16 bg-gradient-green rounded-full flex items-center justify-center mx-auto mb-6">
-                  <value.icon className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-primary mb-4">
-                  {value.title}
-                </h3>
-                <p className="text-muted-foreground">
-                  {value.description}
-                </p>
-              </CardContent>
-            </Card>
+        <div className="mt-14 grid gap-8 md:grid-cols-2">
+          {[
+            { img: voodooImg, title: "Voodoo Chicken", text: "Bold, soulful chicken and fixings that channel the magic of New Orleans." },
+            { img: bluebayouImg, title: "Blue Bayou Oyster Bar & Grill", text: "Fresh Gulf oysters, coastal fare, and easy elegance—classic Louisiana hospitality." },
+          ].map((c, i) => (
+            <FramedCard key={c.title} {...c} shown={shown} animate={animate} delay={120 + i * 120} />
+          ))}
+        </div>
+
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {PILLARS.map(({ icon: Icon, title, text }, i) => (
+            <div
+              key={title}
+              className={[
+                "rounded-2xl border border-black/5 bg-white p-7 text-center shadow-[0_10px_28px_rgba(0,0,0,0.08)]",
+                base, vis, animate ? "duration-700" : "duration-0",
+              ].join(" ")}
+              style={{ transitionDelay: animate ? `${260 + i * 120}ms` : "0ms" }}
+            >
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#8ba38c]">
+                <Icon className="h-7 w-7 text-white" />
+              </div>
+              <h4 className="text-lg font-semibold text-[#4d5a3f]">{title}</h4>
+              <p className="mt-2 text-sm text-[#111827]/80">{text}</p>
+            </div>
           ))}
         </div>
       </div>
     </section>
   );
-};
+}
 
-export default AboutSection;
+function FramedCard({
+  img, title, text, shown, animate, delay,
+}: {
+  img: string; title: string; text: string; shown: boolean; animate: boolean; delay: number;
+}) {
+  const base = "transition-all will-change-[opacity,transform]";
+  const d = animate ? "duration-700" : "duration-0";
+  const vis = shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6";
+  return (
+    <article
+      className={[
+        "relative overflow-hidden rounded-2xl border border-white/40 bg-white/50 backdrop-blur-xl",
+        "shadow-[0_12px_40px_rgba(0,0,0,0.15)] p-4 flex flex-col",
+        base, d, vis,
+      ].join(" ")}
+      style={{ transitionDelay: animate ? `${delay}ms` : "0ms" }}
+    >
+      <div
+        className={["overflow-hidden rounded-xl transition-all", d, shown ? "scale-100 blur-0" : "scale-[0.98] blur-[2px]"].join(" ")}
+        style={{ transitionDelay: animate ? `${delay + 40}ms` : "0ms" }}
+      >
+        <img src={img} alt={title} className="h-80 md:h-96 w-full object-cover" />
+      </div>
+      <div
+        className={["mt-5 transition-all", d, shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"].join(" ")}
+        style={{ transitionDelay: animate ? `${delay + 120}ms` : "0ms" }}
+      >
+        <h3 className="text-2xl font-semibold text-[#4d5a3f]">{title}</h3>
+        <p className="mt-2 text-base text-[#111827]/85">{text}</p>
+      </div>
+    </article>
+  );
+}
