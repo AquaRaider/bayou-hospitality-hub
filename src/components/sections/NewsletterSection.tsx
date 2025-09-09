@@ -4,41 +4,63 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import heroImage from "@/assets/hero-food.jpg";
 
-const BG_SCALE = 1.25;           // zoom-in so edges never show
-const PARALLAX_SPEED = 0.22;     // parallax strength
-const PARALLAX_EASE = 0.08;      // smoothing (smaller = smoother)
-const BUBBLE_BLACK_ALPHA = 0.18; // subtle bubble darkness
+const backgroundImage = "/media/photos/blue_bayou/Blue_Bayou_Drink02.jpg";
 
-// Heading edge & shadow tuning
-const HEADING_BACKDROP_OFFSET_PX = 0.75; // left-offset distance of the crisp white edge
-const HEADING_WHITE_ALPHA = 0.6;         // 60% opacity for the white edge
-const HEADING_BLACK_SHADOW = "0 6px 18px rgba(0,0,0,0.65)"; // stronger black drop shadow
+const BG_SCALE = 1.25;
+const BG_BLUR = 0;               // 👈 adjust blur here
+const PARALLAX_SPEED = 0.1;
+const PARALLAX_EASE = 0.04;
+const BUBBLE_BLACK_ALPHA = 0.18;
+
+const HEADING_BACKDROP_OFFSET_PX = 0.75;
+const HEADING_WHITE_ALPHA = 0.6;
+const HEADING_BLACK_SHADOW = "0 6px 18px rgba(0,0,0,0.65)";
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
-  // Parallax state/refs
   const sectionRef = useRef<HTMLElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const currYRef = useRef(0);
   const targetYRef = useRef(0);
   const [parY, setParY] = useState(0);
+  const inViewRef = useRef(false);
 
-  // Smooth parallax loop (lerp toward target)
+  // Smooth parallax loop, but only while in view
   useEffect(() => {
     const animate = () => {
-      const next =
-        currYRef.current + (targetYRef.current - currYRef.current) * PARALLAX_EASE;
+      if (!inViewRef.current) return; // pause when offscreen
+      const next = currYRef.current + (targetYRef.current - currYRef.current) * PARALLAX_EASE;
       currYRef.current = next;
       setParY(next);
       rafRef.current = requestAnimationFrame(animate);
     };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const on = entries.some((e) => e.isIntersecting);
+        inViewRef.current = on;
+        if (on) {
+          if (rafRef.current) cancelAnimationFrame(rafRef.current);
+          rafRef.current = requestAnimationFrame(animate);
+        } else {
+          if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        }
+      },
+      { rootMargin: "200px 0px" }
+    );
+
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   // Update target based on scroll/resize
@@ -89,7 +111,6 @@ const NewsletterSection = () => {
     }, 3000);
   };
 
-  // Soft text shadow for readability inside bubbles (body text only)
   const BODY_TEXT_SHADOW = "0 2px 10px rgba(0,0,0,0.35), 0 1px 2px rgba(0,0,0,0.45)";
 
   return (
@@ -97,24 +118,23 @@ const NewsletterSection = () => {
       ref={sectionRef}
       id="newsletter"
       className="relative isolate py-28 overflow-hidden"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "900px" }}
     >
-      {/* Background holder: overflow-hidden keeps section edges crisp */}
+      {/* Background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center will-change-transform"
           style={{
-            backgroundImage: `url(${heroImage})`,
+            backgroundImage: `url(${backgroundImage})`,
             transform: `translateY(${parY}px) scale(${BG_SCALE})`,
-            filter: "blur(3px)",
+            filter: `blur(${BG_BLUR}px)`,
           }}
         />
       </div>
 
       <div className="relative container-custom">
         <div className="max-w-3xl mx-auto space-y-10">
-          {/* =======================
-              BLOG BUBBLE (top)
-              ======================= */}
+          {/* BLOG bubble */}
           <div
             id="blog"
             className={[
@@ -128,30 +148,22 @@ const NewsletterSection = () => {
               borderColor: "rgba(255,255,255,0.22)",
             }}
           >
-            {/* Heading — Light Blue with stronger black shadow + white edge (left) */}
             <h2
               className="text-3xl lg:text-4xl font-serif font-bold mb-4 text-bayou-light-blue uppercase"
               style={{
                 textShadow: [
-                  HEADING_BLACK_SHADOW, // stronger black drop shadow
-                  `-${HEADING_BACKDROP_OFFSET_PX}px 0 0 rgba(255,255,255,${HEADING_WHITE_ALPHA})`, // crisp white edge (60% opacity)
+                  HEADING_BLACK_SHADOW,
+                  `-${HEADING_BACKDROP_OFFSET_PX}px 0 0 rgba(255,255,255,${HEADING_WHITE_ALPHA})`,
                 ].join(", "),
               }}
             >
               BLOG
             </h2>
-
-            {/* Body — White (Questrial) */}
-            <p
-              className="mb-8 text-lg font-sans text-white/95"
-              style={{ textShadow: BODY_TEXT_SHADOW }}
-            >
+            <p className="mb-8 text-lg font-sans text-white/95" style={{ textShadow: BODY_TEXT_SHADOW }}>
               We post updates on promotions, menu changes, new experiences, and
               behind-the-scenes stories across our restaurants. Follow along to
               stay in the loop.
             </p>
-
-            {/* Same styling/behavior as Newsletter button */}
             <Button
               type="button"
               onClick={() => { window.location.href = "/blog"; }}
@@ -162,9 +174,7 @@ const NewsletterSection = () => {
             </Button>
           </div>
 
-          {/* =======================
-              NEWSLETTER BUBBLE (existing)
-              ======================= */}
+          {/* NEWSLETTER bubble */}
           <div
             className={[
               "rounded-2xl border",
@@ -177,23 +187,18 @@ const NewsletterSection = () => {
               borderColor: "rgba(255,255,255,0.22)",
             }}
           >
-            {/* Mail icon — WHITE */}
             <Mail className="w-10 h-10 mx-auto mb-4 text-white opacity-95" />
-
-            {/* Heading — Light Blue with stronger black shadow + white edge (left) */}
             <h2
               className="text-3xl lg:text-4xl font-serif font-bold mb-4 text-bayou-light-blue uppercase"
               style={{
                 textShadow: [
-                  HEADING_BLACK_SHADOW, // stronger black drop shadow
-                  `-${HEADING_BACKDROP_OFFSET_PX}px 0 0 rgba(255,255,255,${HEADING_WHITE_ALPHA})`, // crisp white edge (60% opacity)
+                  HEADING_BLACK_SHADOW,
+                  `-${HEADING_BACKDROP_OFFSET_PX}px 0 0 rgba(255,255,255,${HEADING_WHITE_ALPHA})`,
                 ].join(", "),
               }}
             >
               STAY CONNECTED
             </h2>
-
-            {/* Body — White (Questrial) */}
             <p className="mb-8 text-lg font-sans text-white/95" style={{ textShadow: BODY_TEXT_SHADOW }}>
               Be the first to know about new menu items, special events, and
               exclusive offers from both our restaurants.

@@ -1,10 +1,9 @@
+// src/components/sections/RestaurantsSection.tsx
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink, MapPin, ChevronDown, Facebook, Instagram } from "lucide-react";
-import voodooChickenImage from "@/assets/voodoo-chicken.jpg";
-import blueBayouImage from "@/assets/blue-bayou.jpg";
+import SmoothImage from "@/components/ui/SmoothImage";
 
-/** Inline brand icons missing from lucide */
 const IconX = ({ className = "w-5 h-5" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M18.244 2H21l-6.73 7.7L22 22h-6.74l-4.35-5.66L5.9 22H3.14l7.2-8.23L2 2h6.79l4.03 5.37L18.24 2Zm-2.36 18h2.04L8.2 4H6.16l9.72 16Z"/>
@@ -32,7 +31,7 @@ type Restaurant = {
 const restaurants: Restaurant[] = [
   {
     name: "Voodoo Chicken",
-    image: voodooChickenImage,
+    image: "/media/photos/voodoo_chicken/Voodoo_Chicken_Drink05.jpg",
     description:
       "Experience bold, authentic New Orleans flavors with our signature fried chicken, crafted with secret spices and served with Southern hospitality.",
     locationSummary: "French Quarter, New Orleans",
@@ -48,13 +47,13 @@ const restaurants: Restaurant[] = [
       { kind: "instagram", href: "https://www.instagram.com/voodoochickenanddaiquiris/#" },
       {
         kind: "google",
-        href: "https://www.google.com/search?sca_esv=6c97737eef5bcf41&sca_upv=1&q=Voodoo+Chicken+%26+Daiquiris&ludocid=5871745738521900036&lsig=AB86z5Ux8NlU5gZBKwjCilFzjf_Y&sa=X&ved=2ahUKEwjz5P_goY2HAxUwRfEDHR3JDA0QoAJ6BAgLEAc&biw=1920&bih=953#lrd=0x8620a7acf094bb81:0x517ca1a3ac02f404,1,,,,",
+        href: "https://www.google.com/search?sca_esv=6c97737eef5bcf41&sca_upv=1&q=Voodoo+Chicken+%26+Daiquiris&ludocid=5871745738521900036&lsig=AB86z5Ux8NlU5gZBKwjCilFzjf_Y&sa=X&ved=2ahUKEwjz5P_goY2HAxUwRfEDHR3JDA0QoAJ6BAgLEAc",
       },
     ],
   },
   {
     name: "Blue Bayou Oyster Bar & Grill",
-    image: blueBayouImage,
+    image: "/media/photos/blue_bayou/Blue_Bayou_Interior06.jpg",
     description:
       "Fresh Gulf oysters and elevated Louisiana cuisine in an elegant setting. Perfect for special occasions and unforgettable dining experiences.",
     locationSummary: "Warehouse District, New Orleans",
@@ -65,7 +64,7 @@ const restaurants: Restaurant[] = [
       { kind: "instagram", href: "https://www.instagram.com/bluebayourestaurantnola" },
       {
         kind: "google",
-        href: "https://www.google.com/search?q=blue+bayou+restaurant+and+oyster+bar+reviews&oq=Blue+Bayou+Restaurant+and+Oyster+Bar+review&gs_lcrp=EgZjaHJvbWUqBwgAEAAYgAQyBwgAEAAYgAQyBggBEEUYOTIICAIQABgWGB4yCggDEAAYgAQYogSoAgCwAgE&sourceid=chrome&ie=UTF-8#lrd=0x8620a75388bb527b:0xc849efc5dcf24e6b,1,,,,",
+        href: "https://www.google.com/search?q=blue+bayou+restaurant+and+oyster+bar+reviews#lrd=0x8620a75388bb527b:0xc849efc5dcf24e6b,1",
       },
     ],
   },
@@ -73,7 +72,11 @@ const restaurants: Restaurant[] = [
 
 export default function RestaurantsSection() {
   return (
-    <section id="restaurants" className="py-20 bg-gradient-subtle">
+    <section
+      id="restaurants"
+      className="py-20 bg-gradient-subtle"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "800px" }}
+    >
       <div className="container-custom">
         <div className="mb-16 text-center">
           <h2 className="mb-6 font-serif text-4xl font-bold text-[#4d5a3f] lg:text-5xl">
@@ -89,20 +92,18 @@ export default function RestaurantsSection() {
           {restaurants.map((r) => (
             <Card key={r.name} className="card-hover overflow-hidden border-0 bg-card shadow-elegant">
               <div className="aspect-[4/3] overflow-hidden">
-                <img
+                <SmoothImage
                   src={r.image}
                   alt={`${r.name} restaurant interior and dining experience`}
-                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
+                  className="h-full w-full transition-transform duration-500 hover:scale-110"
                 />
               </div>
 
               <CardContent className="p-8">
-                {/* Name — Dark Green */}
                 <h3 className="mb-4 font-serif text-2xl font-bold text-[#4d5a3f]">{r.name}</h3>
 
                 <p className="mb-6 leading-relaxed text-muted-foreground">{r.description}</p>
 
-                {/* Location summary + socials (icons only, right-aligned) */}
                 <div className="mb-6 flex items-center gap-3 text-sm text-muted-foreground">
                   <div className="flex items-center">
                     <MapPin className="mr-3 h-4 w-4 text-[#8ba38c]" />
@@ -142,7 +143,6 @@ export default function RestaurantsSection() {
                   )}
                 </div>
 
-                {/* View all locations */}
                 <details className="group">
                   <summary
                     className="flex cursor-pointer select-none items-center gap-2 text-sm font-medium text-[#8ba38c] outline-none transition-colors hover:text-[#4d5a3f]"
@@ -184,7 +184,6 @@ export default function RestaurantsSection() {
                   </ul>
                 </details>
 
-                {/* Website button */}
                 <div className="mt-6">
                   <a href={r.website} target="_blank" rel="noopener noreferrer">
                     <Button className="btn-hero w-full">

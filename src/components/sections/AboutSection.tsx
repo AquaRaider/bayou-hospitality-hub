@@ -1,8 +1,11 @@
 // src/components/sections/AboutSection.tsx
 import { useEffect, useRef, useState } from "react";
-import voodooImg from "@/assets/voodoo-chicken.jpg";
-import bluebayouImg from "@/assets/blue-bayou.jpg";
 import { Heart, Users, Award } from "lucide-react";
+import SmoothImage from "@/components/ui/SmoothImage";
+
+// public/media paths
+const voodooImg = "/media/photos/voodoo_chicken/Voodoo_Chicken_Drink03.jpg";
+const bluebayouImg = "/media/photos/blue_bayou/Blue_Bayou_Interior03.jpg";
 
 const PILLARS = [
   { icon: Heart, title: "Crafted with Heart", text: "Menus shaped by New Orleans’ traditions, executed with modern technique." },
@@ -10,7 +13,7 @@ const PILLARS = [
   { icon: Award, title: "Relentless Quality", text: "Sourcing, prep, and service you can taste every time." },
 ];
 
-const EARLY = 120; // px before About top to trigger the down animation
+const EARLY = 120;
 
 export default function AboutSection() {
   const ref = useRef<HTMLElement | null>(null);
@@ -35,7 +38,6 @@ export default function AboutSection() {
 
   const inHero = (y: number) => y <= heroBottom();
 
-  // Helper to set/reset the HOSPITALITY word color (drives Header span)
   const setHospitalityInk = (value?: string) => {
     const root = document.documentElement;
     if (!root) return;
@@ -49,19 +51,13 @@ export default function AboutSection() {
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (reduce) { setShown(true); setAnimate(false); }
 
-    // Show logic on load (unchanged)
     if (!reduce && window.scrollY >= aboutTop() - EARLY) {
       setShown(true);
       setAnimate(false);
     }
 
-    // Ensure initial color matches BAYOU's state on load:
-    // if we're not in Hero at mount, set Light Blue; otherwise clear to white.
-    if (inHero(window.scrollY)) {
-      setHospitalityInk(undefined); // white (inherits --header-ink)
-    } else {
-      setHospitalityInk("hsl(var(--bayou-light-blue))");
-    }
+    if (inHero(window.scrollY)) setHospitalityInk(undefined);
+    else setHospitalityInk("hsl(var(--bayou-light-blue))");
 
     let ticking = false;
     const onScroll = () => {
@@ -73,34 +69,18 @@ export default function AboutSection() {
         const down = y1 > y0;
         const aTop = aboutTop();
 
-        // Entering from Hero -> About (down): animate About content only (no color here)
-        if (down && y0 < aTop - EARLY && y1 >= aTop - EARLY) {
-          setShown(true);
-          setAnimate(true);
-        }
-
-        // Entering from below -> About (up): visible, no animation (no color change here)
-        if (!down && y0 > aTop && y1 <= aTop) {
-          setShown(true);
-          setAnimate(false);
-        }
+        if (down && y0 < aTop - EARLY && y1 >= aTop - EARLY) { setShown(true); setAnimate(true); }
+        if (!down && y0 > aTop && y1 <= aTop) { setShown(true); setAnimate(false); }
 
         prevY.current = y1;
         ticking = false;
       });
     };
 
-    // EXACT color timing: use the same snap event the Hero uses
     const onHeroSnapFinished = (e: Event) => {
       const ev = e as CustomEvent<{ dir: "down" | "up" }>;
-      if (ev.detail?.dir === "down") {
-        // Leaving Hero -> apply Light Blue exactly when BAYOU switches
-        setHospitalityInk("hsl(var(--bayou-light-blue))");
-      }
-      if (ev.detail?.dir === "up") {
-        // Returning to Hero -> remove override (falls back to white like BAYOU)
-        setHospitalityInk(undefined);
-      }
+      if (ev.detail?.dir === "down") setHospitalityInk("hsl(var(--bayou-light-blue))");
+      if (ev.detail?.dir === "up") setHospitalityInk(undefined);
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -111,7 +91,7 @@ export default function AboutSection() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll as any);
       window.removeEventListener("heroSnapFinished", onHeroSnapFinished as any);
-      setHospitalityInk(undefined); // cleanup to white
+      setHospitalityInk(undefined);
     };
   }, []);
 
@@ -120,7 +100,12 @@ export default function AboutSection() {
   const vis = shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6";
 
   return (
-    <section ref={ref} id="about" className="relative bg-white py-24 md:py-32">
+    <section
+      ref={ref}
+      id="about"
+      className="relative bg-white py-24 md:py-32"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "900px" }}
+    >
       <div className="container mx-auto px-4">
         <div className={["mx-auto max-w-4xl text-center", base, dur, vis].join(" ")}>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#4d5a3f]">
@@ -191,7 +176,7 @@ function FramedCard({
         className={["overflow-hidden rounded-xl transition-all", d, shown ? "scale-100 blur-0" : "scale-[0.98] blur-[2px]"].join(" ")}
         style={{ transitionDelay: animate ? `${delay + 40}ms` : "0ms" }}
       >
-        <img src={img} alt={title} className="h-80 md:h-96 w-full object-cover" />
+        <SmoothImage src={img} alt={title} className="h-80 md:h-96 w-full" />
       </div>
       <div
         className={["mt-5 transition-all", d, shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"].join(" ")}
